@@ -33,9 +33,27 @@ function Home() {
         loadPopularMovies();
     }, [])
 
-    const handleSearch = (ev) => {
+    const handleSearch = async (ev) => {
         ev.preventDefault();
-        alert('Something');    
+        if (!searchQuery.trim()) return;        
+        if(loading) return;     // should not be able to search while their search results are being fetched
+        setLoading(true);
+
+        try
+        {
+            const searchResults = await searchMovies(searchQuery);
+            setMovies(searchResults);
+            setError(null);
+        } catch(error)
+        {
+            console.log(error);
+            setError("Failed to search movies...");
+        }
+        finally
+        {
+            setLoading(false);
+        }
+
         setSearchQuery(searchQuery);   
     }
 
